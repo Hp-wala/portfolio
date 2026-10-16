@@ -74,6 +74,53 @@ export async function fetchAdminProjects() {
   return attachProjectImages(client, data || []);
 }
 
+function getVisitSource() {
+  const params = new URLSearchParams(location.search);
+  const campaign = (params.get('utm_source') || '').toLowerCase();
+  if (campaign.includes('instagram') || campaign === 'insta' || campaign === 'ig' || params.has('igshid')) {
+    return 'instagram';
+  }
+  if (campaign.includes('facebook') || campaign === 'fb' || params.has('fbclid')) return 'facebook';
+
+  let host = '';
+  try {
+    host = new URL(document.referrer).hostname.toLowerCase();
+  } catch {}
+  if (host.endsWith('instagram.com')) return 'instagram';
+  if (host.endsWith('facebook.com') || host.endsWith('fb.com')) return 'facebook';
+  return host ? 'other' : 'direct';
+}
+
+export async function recordVisit() {
+  try {
+    try {
+      if (sessionStorage.getItem('portfolio_visit_recorded') === '1') return;
+    } catch {}
+
+    const { error } = await requireClient().from('site_visits').insert({ source: getVisitSource() });
+    if (error) throw error;
+    try {
+      sessionStorage.setItem('portfolio_visit_recorded', '1');
+    } catch {}
+  } catch {}
+}
+
+export async function fetchVisitStats() {
+  const client = await requireAdminSession();
+  const counts = await Promise.all([
+    client.from('site_visits').select('id', { count: 'exact', head: true }),
+    client.from('site_visits').select('id', { count: 'exact', head: true }).eq('source', 'instagram'),
+    client.from('site_visits').select('id', { count: 'exact', head: true }).eq('source', 'facebook'),
+  ]);
+  const failure = counts.find((result) => result.error);
+  if (failure) throw failure.error;
+  return {
+    total: counts[0].count || 0,
+    instagram: counts[1].count || 0,
+    facebook: counts[2].count || 0,
+  };
+}
+
 async function attachProjectImages(client, projects) {
   if (!projects.length) return projects;
   const { data, error } = await client.from('project_images')
@@ -264,15 +311,21 @@ function baseImageRecord(image, projectId, sortOrder, storagePath, publicUrl, wi
   };
 }
 
+let allPublicProjects = [];
+let showAllProjects = false;
+
 function renderPublicProjects(projects) {
   const box = document.getElementById('projects');
+  const showAllButton = document.getElementById('show-all-projects');
   if (!box) return;
   if (!projects.length) {
     box.textContent = 'Projects coming soon.';
+    if (showAllButton) showAllButton.hidden = true;
     return;
   }
 
-  const cards = projects.map((project) => {
+  const displayedProjects = showAllProjects ? projects : projects.slice(0, 3);
+  const cards = displayedProjects.map((project) => {
     const card = document.createElement('article');
     card.className = 'card';
     const title = document.createElement('h3');
@@ -341,6 +394,10 @@ function renderPublicProjects(projects) {
     return card;
   });
   box.replaceChildren(...cards);
+  if (showAllButton) {
+    showAllButton.hidden = projects.length <= 3;
+    showAllButton.textContent = showAllProjects ? 'Hide extra projects' : 'Show all projects';
+  }
 }
 
 let galleryItems = [];
@@ -409,10 +466,14 @@ function initializeGallery() {
 
 async function loadPublicProjects() {
   try {
-    renderPublicProjects(await fetchPublicProjects());
+    allPublicProjects = await fetchPublicProjects();
+    showAllProjects = false;
+    renderPublicProjects(allPublicProjects);
   } catch {
     const box = document.getElementById('projects');
     if (box) box.textContent = 'Projects coming soon.';
+    const showAllButton = document.getElementById('show-all-projects');
+    if (showAllButton) showAllButton.hidden = true;
   }
 }
 
@@ -426,6 +487,20 @@ function getLeadSource() {
   }
 }
 
+async function submitLeadToNetlify(form) {
+  const payload = new URLSearchParams();
+  for (const [key, value] of new FormData(form)) {
+    if (typeof value === 'string') payload.append(key, value);
+  }
+  payload.set('form-name', 'lead');
+  const response = await fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: payload.toString(),
+  });
+  if (!response.ok) throw new Error('Netlify could not accept the enquiry.');
+}
+
 async function submitLead(form, status, button) {
   const values = Object.fromEntries(new FormData(form));
   if (values.website) {
@@ -433,19 +508,15 @@ async function submitLead(form, status, button) {
     status.textContent = 'Thank you! I will get back to you soon.';
     return;
   }
-  if (!values.name.trim() || !values.phone.trim() || !values.email.trim() || !values.need.trim()) {
-    status.textContent = 'Please fill in name, phone, email and what you need.';
-    return;
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
-    status.textContent = 'Please enter a valid email address.';
+  if (!values.name.trim() || !values.phone.trim() || !values.need.trim()) {
+    status.textContent = 'Please fill in name, phone and what you need.';
     return;
   }
 
   const lead = {
     name: values.name.trim(),
     phone: values.phone.trim(),
-    email: values.email.trim(),
+    email: null,
     need: values.need.trim(),
     budget: values.budget || null,
     message: values.message.trim() || null,
@@ -454,13 +525,22 @@ async function submitLead(form, status, button) {
 
   button.disabled = true;
   status.textContent = 'Sending…';
+  let acceptedByNetlify = false;
   try {
+    await submitLeadToNetlify(form);
+    acceptedByNetlify = true;
     const { error } = await requireClient().from('leads').insert(lead);
     if (error) throw error;
     form.reset();
     status.textContent = 'Thank you! I will get back to you soon.';
-  } catch {
-    status.textContent = 'Could not send your enquiry. Please try again or contact me by email.';
+  } catch (error) {
+    console.error('Lead submission failed:', error);
+    if (acceptedByNetlify) {
+      form.reset();
+      status.textContent = 'Your enquiry was submitted, but a database copy could not be saved.';
+    } else {
+      status.textContent = 'Could not send your enquiry. Please try again later.';
+    }
   } finally {
     button.disabled = false;
   }
@@ -471,6 +551,14 @@ function initializePageFeatures() {
   if (year) year.textContent = new Date().getFullYear();
 
   initializeGallery();
+  if (document.getElementById('projects')) recordVisit();
+  const showAllButton = document.getElementById('show-all-projects');
+  if (showAllButton) {
+    showAllButton.addEventListener('click', () => {
+      showAllProjects = !showAllProjects;
+      renderPublicProjects(allPublicProjects);
+    });
+  }
   if (document.getElementById('projects')) loadPublicProjects();
   const form = document.getElementById('lead');
   const status = document.getElementById('status');

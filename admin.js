@@ -8,6 +8,7 @@ import {
   saveProject,
   saveProjectImages,
   deleteProject,
+  fetchVisitStats,
 } from './supabase.js';
 
 const loginPanel = document.getElementById('login-panel');
@@ -21,6 +22,7 @@ const projectRows = document.getElementById('project-rows');
 const imageInput = document.getElementById('project-images');
 const imagePreviews = document.getElementById('image-previews');
 const imageStatus = document.getElementById('image-status');
+const visitStatsStatus = document.getElementById('visit-stats-status');
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_PROJECT_IMAGES = 8;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -95,6 +97,19 @@ async function refreshProjects(successMessage = '') {
     dashboardStatus.textContent = successMessage;
   } catch (error) {
     dashboardStatus.textContent = error.message || 'Could not load projects.';
+  }
+}
+
+async function refreshVisitStats() {
+  visitStatsStatus.textContent = 'Loading visits…';
+  try {
+    const stats = await fetchVisitStats();
+    document.getElementById('visit-total').textContent = stats.total.toLocaleString();
+    document.getElementById('visit-instagram').textContent = stats.instagram.toLocaleString();
+    document.getElementById('visit-facebook').textContent = stats.facebook.toLocaleString();
+    visitStatsStatus.textContent = '';
+  } catch (error) {
+    visitStatsStatus.textContent = error.message || 'Could not load visit statistics.';
   }
 }
 
@@ -292,6 +307,8 @@ document.getElementById('new-project').addEventListener('click', () => {
   projectForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
+document.getElementById('refresh-visit-stats').addEventListener('click', refreshVisitStats);
+
 document.getElementById('cancel-edit').addEventListener('click', resetProjectForm);
 
 projectForm.addEventListener('submit', async (event) => {
@@ -353,10 +370,11 @@ async function initializeAdmin() {
       return;
     }
     showDashboard();
-    await refreshProjects();
+    await Promise.all([refreshProjects(), refreshVisitStats()]);
   } catch (error) {
     showLogin(error.message || 'Could not check your session.');
   }
 }
 
 initializeAdmin();
+  await Promise.all([refreshProjects(), refreshVisitStats()]);

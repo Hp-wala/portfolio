@@ -2,13 +2,6 @@
 <html lang="en">
 
 <head>
-  <script>
-    (function () {
-      var t = localStorage.getItem('theme') || 'system';
-      var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    })();
-  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
@@ -20,11 +13,6 @@
   <header class="site-header">
     <div class="wrap bar">
       <a class="brand" href="index.html">Ritul · Admin</a>
-      <select id="theme-select" class="theme-select" aria-label="Select theme">
-        <option value="system">System</option>
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-      </select>
     </div>
   </header>
 
@@ -52,6 +40,19 @@
         </div>
       </div>
       <p id="dashboard-status" class="admin-status" role="status" aria-live="polite"></p>
+
+      <section class="visit-statistics" aria-labelledby="visit-statistics-title">
+        <div class="visit-statistics-header">
+          <h2 id="visit-statistics-title">Traffic</h2>
+          <button id="refresh-visit-stats" class="admin-small-button" type="button">Refresh</button>
+        </div>
+        <div class="visit-stat-grid">
+          <article class="visit-stat"><span>Total visits</span><strong id="visit-total">—</strong></article>
+          <article class="visit-stat"><span>Instagram</span><strong id="visit-instagram">—</strong></article>
+          <article class="visit-stat"><span>Facebook</span><strong id="visit-facebook">—</strong></article>
+        </div>
+        <p id="visit-stats-status" class="admin-status" role="status" aria-live="polite"></p>
+      </section>
 
       <form id="project-form" class="admin-project-form" hidden>
         <h2 id="project-form-title">Add project</h2>

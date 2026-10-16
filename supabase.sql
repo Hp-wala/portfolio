@@ -4,7 +4,7 @@ create table if not exists public.leads (
   created_at timestamptz not null default now(),
   name       text not null,
   phone      text not null,
-  email      text not null,
+  email      text,
   need       text not null,
   budget     text,
   message    text,
@@ -12,9 +12,10 @@ create table if not exists public.leads (
   status     text not null default 'new'
 );
 
+alter table public.leads alter column email drop not null;
 alter table public.leads enable row level security;
 revoke all on public.leads from public, anon, authenticated;
-grant insert on public.leads to anon;
+grant insert on public.leads to anon, authenticated;
 
 create table if not exists public.projects (
   id            uuid primary key default gen_random_uuid(),
@@ -42,6 +43,12 @@ create table if not exists public.project_images (
   created_at   timestamptz not null default now()
 );
 
+create table if not exists public.site_visits (
+  id         uuid primary key default gen_random_uuid(),
+  source     text not null check (source in ('instagram', 'facebook', 'direct', 'other')),
+  created_at timestamptz not null default now()
+);
+
 create unique index if not exists project_images_one_cover_per_project
   on public.project_images(project_id) where is_cover;
 
@@ -52,16 +59,29 @@ begin
   for policy_record in
     select schemaname, tablename, policyname
     from pg_policies
-    where schemaname = 'public' and tablename in ('leads', 'projects', 'project_images')
+    where schemaname = 'public' and tablename in ('leads', 'projects', 'project_images', 'site_visits')
   loop
     execute format('drop policy %I on %I.%I', policy_record.policyname, policy_record.schemaname, policy_record.tablename);
   end loop;
 end
 $$;
 
-create policy leads_anon_insert on public.leads
-  for insert to anon
+create policy leads_public_insert on public.leads
+  for insert to anon, authenticated
   with check (true);
+
+alter table public.site_visits enable row level security;
+revoke all on public.site_visits from public, anon, authenticated;
+grant insert on public.site_visits to anon, authenticated;
+grant select on public.site_visits to authenticated;
+
+create policy site_visits_public_insert on public.site_visits
+  for insert to anon, authenticated
+  with check (source in ('instagram', 'facebook', 'direct', 'other'));
+
+create policy site_visits_admin_read on public.site_visits
+  for select to authenticated
+  using (lower(coalesce(auth.jwt() ->> 'email', '')) = lower('ritul@gmail.com'));
 
 alter table public.projects enable row level security;
 revoke all on public.projects from public, anon, authenticated;

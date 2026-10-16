@@ -13,8 +13,11 @@ portfolio/
 4. **GitHub**: create a repo and push this folder.
 5. **Netlify**: import the repo, use an empty build command, and publish directory `.`. No Supabase environment variables are needed for this browser-client setup.
 6. Replace `YOUR-SITE.netlify.app` in index.html, sitemap.xml and robots.txt with your real URL.
-7. Test the lead form and visit `/admin.html` to manage projects. Project content is stored in Supabase; `projects.json` is no longer used by the site.
+7. Enable Netlify Forms for the `lead` form and add an email notification to `rituldas340@gmail.com`. Test the lead form and visit `/admin.html` to manage projects. Project content is stored in Supabase; `projects.json` is no longer used by the site.
 8. Analytics: enable Netlify Analytics (dashboard) or uncomment the Plausible line in index.html.
+
+## Traffic attribution
+The admin dashboard counts one visit per browser tab session. Share links tagged with `?utm_source=instagram` or `?utm_source=facebook` for reliable source attribution; social in-app browsers may hide referrer information. No IP address or personal identifier is stored.
 
 ## QR codes per place
 Use one URL per location: `https://YOUR-SITE/?src=hotel1`, `?src=event1`, `?src=cafe2`.

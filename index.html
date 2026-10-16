@@ -2,14 +2,6 @@
 <html lang="en">
 
 <head>
-  <!-- Theme: apply before CSS loads to avoid white flash -->
-  <script>
-    (function () {
-      var t = localStorage.getItem('theme') || 'system';
-      var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    })();
-  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ritul | Web Developer & Digital Solutions Builder</title>
@@ -39,11 +31,6 @@
       <a class="brand" href="#top">Ritul</a>
       <nav aria-label="Main"><a href="#work">Work</a><a href="#services">Services</a><a href="#about">About</a><a
           href="#contact">Contact</a></nav>
-      <select id="theme-select" class="theme-select" aria-label="Select theme">
-        <option value="system">⚙️ System</option>
-        <option value="light">☀️ Light</option>
-        <option value="dark">🌙 Dark</option>
-      </select>
     </div>
   </header>
 
@@ -62,6 +49,7 @@
       <div id="projects" class="grid">
         <p>Loading projects…</p>
       </div>
+      <button id="show-all-projects" class="btn ghost projects-toggle" type="button" hidden>Show all projects</button>
     </section>
 
     <section class="alt" id="services">
@@ -148,18 +136,25 @@
       </div>
     </section>
 
-    <section class="wrap" id="contact">
-      <h2>Contact</h2>
-      <div class="btns">
-        <a class="btn" href="https://wa.me/91XXXXXXXXXX?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20project"
-          rel="noopener">WhatsApp</a>
-        <a class="btn ghost" href="mailto:you@example.com">Email</a>
-      </div>
-      <h3 class="fh">Start a Project</h3>
-      <form id="lead" novalidate>
+    <section class="alt contact-section" id="contact">
+      <div class="wrap contact-layout">
+        <div class="contact-info">
+          <p class="contact-kicker">CONTACT</p>
+          <h2>Have a project in mind?</h2>
+          <p>Share a few details, or message me directly on WhatsApp.</p>
+          <div class="btns contact-links">
+            <a class="btn" href="https://wa.me/91XXXXXXXXXX?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20project"
+              rel="noopener">Send WhatsApp Message</a>
+            <a class="btn ghost" href="mailto:rituldas340@gmail.com">Send Email</a>
+          </div>
+        </div>
+        <div class="contact-form-panel">
+          <h3>Start a Project</h3>
+          <p class="contact-form-intro">Tell me what you need and I’ll get back to you.</p>
+          <form id="lead" name="lead" method="POST" data-netlify="true" netlify-honeypot="website" novalidate>
+        <input type="hidden" name="form-name" value="lead">
         <label>Name<input name="name" required maxlength="100" autocomplete="name"></label>
         <label>Phone<input name="phone" type="tel" required maxlength="20" autocomplete="tel"></label>
-        <label>Email<input name="email" type="email" required maxlength="150" autocomplete="email"></label>
         <label>What do you need?<input name="need" required maxlength="200"
             placeholder="e.g. appointment booking website"></label>
         <label>Budget range
@@ -178,7 +173,9 @@
         </div>
         <button class="btn" type="submit">Send Enquiry</button>
         <p id="status" role="status" aria-live="polite"></p>
-      </form>
+          </form>
+        </div>
+      </div>
     </section>
   </main>
 
