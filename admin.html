@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    (function () {
+      var t = localStorage.getItem('theme') || 'system';
+      var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    })();
+  </script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Project Admin | Ritul</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="wrap bar">
+      <a class="brand" href="index.html">Ritul · Admin</a>
+      <select id="theme-select" class="theme-select" aria-label="Select theme">
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="admin-shell wrap">
+    <section id="login-panel" aria-labelledby="login-title">
+      <h1 id="login-title" class="admin-title">Admin login</h1>
+      <p>Sign in with your administrator account.</p>
+      <form id="admin-login" class="admin-login-form">
+        <label>Email<input name="email" type="email" required autocomplete="username"></label>
+        <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+        <button class="btn" type="submit">Sign in</button>
+        <p id="login-status" class="admin-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section id="dashboard" hidden aria-labelledby="dashboard-title">
+      <div class="admin-heading-row">
+        <div>
+          <h1 id="dashboard-title" class="admin-title">Projects</h1>
+          <p>Manage which projects appear on the portfolio.</p>
+        </div>
+        <div class="admin-actions">
+          <button class="btn" id="new-project" type="button">Add project</button>
+          <button class="btn ghost" id="logout" type="button">Log out</button>
+        </div>
+      </div>
+      <p id="dashboard-status" class="admin-status" role="status" aria-live="polite"></p>
+
+      <form id="project-form" class="admin-project-form" hidden>
+        <h2 id="project-form-title">Add project</h2>
+        <input name="id" type="hidden">
+        <label>Title<input name="title" required maxlength="200"></label>
+        <label>Description<textarea name="description" rows="4" maxlength="2000"></textarea></label>
+        <label>Technologies<input name="tech" placeholder="HTML, CSS, JavaScript"></label>
+        <label>Live link (optional)<input name="link" type="url" placeholder="https://example.com"></label>
+        <label>Note (optional)<input name="note" maxlength="300" placeholder="Live demo on request"></label>
+        <label>Project screenshots<input id="project-images" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+        <p class="admin-image-reminder">Blur or hide any sensitive data (names, phone numbers, faces, IDs) before uploading.</p>
+        <p id="image-status" class="admin-status" role="status" aria-live="polite"></p>
+        <div id="image-previews" class="image-preview-list" aria-live="polite"></div>
+        <label>Display order<input name="display_order" type="number" step="1" value="0" required></label>
+        <label class="admin-checkbox"><input name="visible" type="checkbox" checked> Visible on portfolio</label>
+        <div class="admin-actions">
+          <button class="btn" type="submit">Save project</button>
+          <button class="btn ghost" id="cancel-edit" type="button">Cancel</button>
+        </div>
+        <p id="form-status" class="admin-status" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th scope="col">Project</th><th scope="col">Order</th><th scope="col">Visibility</th><th scope="col">Actions</th></tr>
+          </thead>
+          <tbody id="project-rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script type="module" src="admin.js"></script>
+</body>
+
+</html>

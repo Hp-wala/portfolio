@@ -1,0 +1,42 @@
+[
+  {
+    "title": "MLA Appointment Website",
+    "label": "",
+    "problem": "[Describe the problem this solved, e.g. how appointments were handled before.]",
+    "built": "[What you built, e.g. an online appointment request and management system.]",
+    "solution": "[How it solves the problem.]",
+    "tech": ["Node.js", "Express", "JavaScript"],
+    "result": "[Real outcome only. Leave as a placeholder until you have one.]",
+    "link": ""
+  },
+  {
+    "title": "NSS Volunteer Management System",
+    "label": "",
+    "problem": "[Describe the problem.]",
+    "built": "[What you built.]",
+    "solution": "[How it helps the unit.]",
+    "tech": ["HTML", "CSS", "JavaScript", "Supabase", "Netlify"],
+    "result": "[Real outcome only.]",
+    "link": ""
+  },
+  {
+    "title": "English Department E-Magazine / Department Website",
+    "label": "",
+    "problem": "[Describe the problem.]",
+    "built": "[What you built.]",
+    "solution": "[How it helps the department.]",
+    "tech": ["HTML", "CSS", "JavaScript"],
+    "result": "[Real outcome only.]",
+    "link": ""
+  },
+  {
+    "title": "AI-Based Email Threat Intelligence / Spam Detection System",
+    "label": "Academic / personal project",
+    "problem": "[Describe the problem.]",
+    "built": "[What you built.]",
+    "solution": "[Approach used.]",
+    "tech": ["Python", "Flask"],
+    "result": "[Only report results you actually measured.]",
+    "link": ""
+  }
+]
