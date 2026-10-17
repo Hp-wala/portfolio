@@ -98,12 +98,38 @@
     </section>
 
     <section class="alt" id="about">
-      <div class="wrap">
-        <h2>About Me</h2>
-        <p>I am a Computer Science and English student from Assam who builds and deploys real-world web systems,
-          including appointment management, registration and volunteer management systems. I combine technical skill
-          with clear communication to create useful solutions for organisations and businesses.
-        </p>
+      <div class="wrap about-layout">
+        <article class="card founder-card" aria-label="Founder profile">
+          <div class="founder-photo-frame">
+            <div id="founder-photo-fallback" class="founder-photo-fallback" aria-hidden="true">R</div>
+            <img id="founder-photo" src="assets/ritul.jpg" alt="Ritul, founder of Xondhan" width="600" height="600" loading="lazy" decoding="async">
+          </div>
+          <h3>Ritul</h3>
+          <p class="founder-role">Founder, Xondhan</p>
+          <p class="founder-location">Assam, India</p>
+          <ul class="founder-skills">
+            <li>Web Development</li>
+            <li>Automation &amp; AI</li>
+          </ul>
+          <div class="founder-links">
+            <a class="btn" href="#contact" data-contact-link="contact-whatsapp">WhatsApp</a>
+            <a class="btn ghost" href="#contact" data-contact-link="contact-email">Email</a>
+            <a class="btn ghost" href="https://www.instagram.com/invites/contact/?utm_content=ogbkf3h&amp;dlrf=13o4k3us3rqeg" target="_blank" rel="noopener noreferrer">Instagram</a>
+          </div>
+        </article>
+        <div class="about-copy">
+          <h2>About Me</h2>
+          <p>
+
+I’m Ritul, founder of Xondhan, a digital solutions brand from Assam. I build business websites, management systems, automation and AI-powered tools that turn ideas into practical, working solutions.
+
+I focus on understanding what clients truly need, not just what they ask for, but the problems and goals behind the request. That helps me simplify complex requirements, communicate clearly and build solutions that give clients more confidence and control over their work.
+
+At Xondhan, a project is more than a finished product. It is about listening, solving the right problem and building trust through reliability, transparency and meaningful results. My long-term vision is to grow Xondhan into a trusted digital solutions brand that helps businesses and organisations move forward with confidence.
+
+Understanding people. Solving real problems. Building trust through technology.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -141,39 +167,12 @@
         <div class="contact-info">
           <p class="contact-kicker">CONTACT</p>
           <h2>Have a project in mind?</h2>
-          <p>Share a few details, or message me directly on WhatsApp.</p>
+          <p>Reach out directly through WhatsApp or email.</p>
           <div class="btns contact-links">
             <a class="btn" href="https://wa.me/91XXXXXXXXXX?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20project"
-              rel="noopener">Send WhatsApp Message</a>
-            <a class="btn ghost" href="mailto:rituldas340@gmail.com">Send Email</a>
+              id="contact-whatsapp" rel="noopener">Send WhatsApp Message</a>
+            <a class="btn ghost" href="mailto:rituldas340@gmail.com" id="contact-email">Send Email</a>
           </div>
-        </div>
-        <div class="contact-form-panel">
-          <h3>Start a Project</h3>
-          <p class="contact-form-intro">Tell me what you need and I’ll get back to you.</p>
-          <form id="lead" name="lead" method="POST" data-netlify="true" netlify-honeypot="website" novalidate>
-        <input type="hidden" name="form-name" value="lead">
-        <label>Name<input name="name" required maxlength="100" autocomplete="name"></label>
-        <label>Phone<input name="phone" type="tel" required maxlength="20" autocomplete="tel"></label>
-        <label>What do you need?<input name="need" required maxlength="200"
-            placeholder="e.g. appointment booking website"></label>
-        <label>Budget range
-          <select name="budget">
-            <option value="">Prefer not to say</option>
-            <option>Under ₹10,000</option>
-            <option>₹10,000 – ₹25,000</option>
-            <option>₹25,000 – ₹50,000</option>
-            <option>₹50,000+</option>
-            <option>Not sure yet</option>
-          </select>
-        </label>
-        <label>Message<textarea name="message" rows="4" maxlength="2000"></textarea></label>
-        <!-- Honeypot: hidden from people, bots fill it -->
-        <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label>
-        </div>
-        <button class="btn" type="submit">Send Enquiry</button>
-        <p id="status" role="status" aria-live="polite"></p>
-          </form>
         </div>
       </div>
     </section>
